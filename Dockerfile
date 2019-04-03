@@ -54,10 +54,10 @@ WORKDIR /build
 
 RUN mvn -B -e -T 1C -DskipTests=true -DfailIfNoTests=false -Dtest=false clean package -Pdist
 
-FROM quay.io/coreos/hadoop:metering-3.1.1
+FROM quay.io/coreos/hadoop:latest
 
 ENV HIVE_VERSION=2.3.3
-ENV HIVE_HOME=/opt/hive-$HIVE_VERSION
+ENV HIVE_HOME=/opt/hive
 ENV PATH=$HIVE_HOME/bin:$PATH
 
 RUN mkdir -p /opt
@@ -82,8 +82,6 @@ RUN ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/*aws* $HIVE_HOME/lib
 RUN ln -s /usr/share/java/mysql-connector-java.jar "$HIVE_HOME/lib/mysql-connector-java.jar"
 # Configure Postgesql connector jar to be available to hive
 RUN ln -s /usr/share/java/postgresql-jdbc.jar "$HIVE_HOME/lib/postgresql-jdbc.jar"
-
-RUN ln -s $HIVE_HOME /opt/hive
 
 # https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html
 # Java caches dns results forever, don't cache dns results forever:
