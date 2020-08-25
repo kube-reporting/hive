@@ -24,7 +24,7 @@ RUN yum -y update && \
     yum install --setopt=skip_missing_names_on_install=False -y \
         postgresql-jdbc \
         openssl \
-        mariadb-java-client \
+        mysql-connector-java \
     && yum clean all \
     && rm -rf /var/cache/yum
 
@@ -36,7 +36,7 @@ ENV HADOOP_CLASSPATH $HIVE_HOME/hcatalog/share/hcatalog/*:${HADOOP_CLASSPATH}
 # Configure Hadoop AWS Jars to be available to hive
 RUN ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/*aws* $HIVE_HOME/lib
 # Configure MySQL connector jar to be available to hive
-RUN ln -s /usr/lib/java/mariadb-java-client.jar "$HIVE_HOME/lib/mysql-connector-java.jar"
+RUN ln -s /usr/share/java/mysql-connector-java.jar "$HIVE_HOME/lib/mysql-connector-java.jar"
 # Configure Postgesql connector jar to be available to hive
 RUN ln -s /usr/share/java/postgresql-jdbc.jar "$HIVE_HOME/lib/postgresql-jdbc.jar"
 
