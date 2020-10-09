@@ -53,6 +53,7 @@ COPY pom.xml /build/pom.xml
 WORKDIR /build
 
 RUN mvn -B -e -T 1C -DskipTests=true -DfailIfNoTests=false -Dtest=false clean package -Pdist
+RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -DoutputDirectory=/build/postgresql-jdbc.jar
 
 FROM quay.io/coreos/hadoop:latest
 
@@ -65,15 +66,14 @@ WORKDIR /opt
 
 USER root
 
-RUN yum -y update && \
-    yum install --setopt=skip_missing_names_on_install=False -y \
-        postgresql-jdbc \
+RUN yum install --setopt=skip_missing_names_on_install=False -y \
         openssl \
         mysql-connector-java \
     && yum clean all \
     && rm -rf /var/cache/yum
 
 COPY --from=build /build/packaging/target/apache-hive-$HIVE_VERSION-bin/apache-hive-$HIVE_VERSION-bin $HIVE_HOME
+COPY --from=build /build/postgresql-jdbc.jar /usr/share/java/postgresql-jdbc.jar
 WORKDIR $HIVE_HOME
 
 ENV HADOOP_CLASSPATH $HIVE_HOME/hcatalog/share/hcatalog/*:${HADOOP_CLASSPATH}
