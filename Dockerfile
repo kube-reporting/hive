@@ -76,6 +76,7 @@ COPY --from=build /build/packaging/target/apache-hive-$HIVE_VERSION-bin/apache-h
 COPY --from=build /build/postgresql-jdbc.jar /usr/share/java/postgresql-jdbc.jar
 WORKDIR $HIVE_HOME
 
+
 ENV HADOOP_CLASSPATH $HIVE_HOME/hcatalog/share/hcatalog/*:${HADOOP_CLASSPATH}
 ENV JAVA_HOME=/etc/alternatives/jre
 
