@@ -53,7 +53,7 @@ COPY pom.xml /build/pom.xml
 WORKDIR /build
 
 RUN mvn -B -e -T 1C -DskipTests=true -DfailIfNoTests=false -Dtest=false clean package -Pdist
-RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -DoutputDirectory=/build/postgresql-jdbc.jar
+RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -DoutputDirectory=/build -Dmdep.stripVersion
 
 FROM quay.io/coreos/hadoop:latest
 
@@ -73,7 +73,7 @@ RUN yum install --setopt=skip_missing_names_on_install=False -y \
     && rm -rf /var/cache/yum
 
 COPY --from=build /build/packaging/target/apache-hive-$HIVE_VERSION-bin/apache-hive-$HIVE_VERSION-bin $HIVE_HOME
-COPY --from=build /build/postgresql-jdbc.jar /usr/share/java/postgresql-jdbc.jar
+COPY --from=build /build/postgresql.jar /usr/share/java/postgresql-jdbc.jar
 WORKDIR $HIVE_HOME
 
 
@@ -85,7 +85,7 @@ RUN ln -s ${HADOOP_HOME}/share/hadoop/tools/lib/*aws* $HIVE_HOME/lib
 # Configure MySQL connector jar to be available to hive
 RUN ln -s /usr/share/java/mysql-connector-java.jar "$HIVE_HOME/lib/mysql-connector-java.jar"
 # Configure Postgesql connector jar to be available to hive
-RUN ln -s /opt/hive/lib/postgresql-jdbc.jar "opt/hive/lib/postgresql-jdbc.jar"
+RUN ln -s /usr/share/java/postgresql.jar "$HIVE_HOME/lib/postgresql-jdbc.jar"
 
 # https://docs.oracle.com/javase/7/docs/technotes/guides/net/properties.html
 # Java caches dns results forever, don't cache dns results forever:
