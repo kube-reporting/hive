@@ -22,11 +22,8 @@ COPY data /build/data
 COPY dev-support /build/dev-support
 COPY docs /build/docs
 COPY druid-handler /build/druid-handler
-COPY files /build/files
-COPY findbugs /build/findbugs
 COPY hbase-handler /build/hbase-handler
 COPY hcatalog /build/hcatalog
-COPY hive-blobstore /build/hive-blobstore
 COPY hplsql /build/hplsql
 COPY itests /build/itests
 COPY jdbc-handler /build/jdbc-handler
@@ -48,15 +45,25 @@ COPY spark-client /build/spark-client
 COPY storage-api /build/storage-api
 COPY testutils /build/testutils
 COPY vector-code-gen /build/vector-code-gen
+COPY classification /build/classification
+COPY parser /build/parser
+COPY udf /build/udf
+COPY streaming /build/streaming
+COPY kryo-registrator /build/kryo-registrator
+COPY kudu-handler /build/kudu-handler
+COPY standalone-metastore /build/standalone-metastore
+COPY upgrade-acid /build/upgrade-acid
+COPY kafka-handler /build/kafka-handler
 COPY pom.xml /build/pom.xml
 
 WORKDIR /build
 
 RUN mvn -B -e -T 1C -DskipTests=true -DfailIfNoTests=false -Dtest=false clean package -Pdist
+RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -DoutputDirectory=/build/postgresql-jdbc.jar
 
 FROM quay.io/coreos/hadoop:latest
 
-ENV HIVE_VERSION=2.3.3
+ENV HIVE_VERSION=4.0.0-SNAPSHOT
 ENV HIVE_HOME=/opt/hive
 ENV PATH=$HIVE_HOME/bin:$PATH
 
@@ -65,15 +72,14 @@ WORKDIR /opt
 
 USER root
 
-RUN yum -y update && \
-    yum install --setopt=skip_missing_names_on_install=False -y \
-        postgresql-jdbc \
+RUN yum install --setopt=skip_missing_names_on_install=False -y \
         openssl \
         mysql-connector-java \
     && yum clean all \
     && rm -rf /var/cache/yum
 
 COPY --from=build /build/packaging/target/apache-hive-$HIVE_VERSION-bin/apache-hive-$HIVE_VERSION-bin $HIVE_HOME
+COPY --from=build /build/postgresql-jdbc.jar /usr/share/java/postgresql-jdbc.jar
 WORKDIR $HIVE_HOME
 
 ENV HADOOP_CLASSPATH $HIVE_HOME/hcatalog/share/hcatalog/*:${HADOOP_CLASSPATH}
