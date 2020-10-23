@@ -46,14 +46,10 @@ COPY storage-api /build/storage-api
 COPY testutils /build/testutils
 COPY vector-code-gen /build/vector-code-gen
 COPY classification /build/classification
-COPY parser /build/parser
-COPY udf /build/udf
 COPY streaming /build/streaming
 COPY kryo-registrator /build/kryo-registrator
-COPY kudu-handler /build/kudu-handler
 COPY standalone-metastore /build/standalone-metastore
 COPY upgrade-acid /build/upgrade-acid
-COPY kafka-handler /build/kafka-handler
 COPY pom.xml /build/pom.xml
 
 WORKDIR /build
