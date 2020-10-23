@@ -59,7 +59,7 @@ RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -Doutpu
 
 FROM quay.io/coreos/hadoop:latest
 
-ENV HIVE_VERSION=4.0.0-SNAPSHOT
+ENV HIVE_VERSION=3.1.2
 ENV HIVE_HOME=/opt/hive
 ENV PATH=$HIVE_HOME/bin:$PATH
 
