@@ -75,7 +75,7 @@ RUN yum install --setopt=skip_missing_names_on_install=False -y \
 COPY --from=build /build/packaging/target/apache-hive-$HIVE_VERSION-bin/apache-hive-$HIVE_VERSION-bin $HIVE_HOME
 COPY --from=build /build/postgresql.jar /usr/share/java/postgresql-jdbc.jar
 WORKDIR $HIVE_HOME
-
+RUN rm -f $HIVE_HOME/lib/postgresql-9.4.1208.jre7.jar
 
 ENV HADOOP_CLASSPATH $HIVE_HOME/hcatalog/share/hcatalog/*:${HADOOP_CLASSPATH}
 ENV JAVA_HOME=/etc/alternatives/jre
