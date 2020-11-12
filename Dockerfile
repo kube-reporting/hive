@@ -57,7 +57,7 @@ WORKDIR /build
 RUN mvn -B -e -T 1C -DskipTests=true -DfailIfNoTests=false -Dtest=false clean package -Pdist
 RUN mvn dependency:copy -Dartifact=org.postgresql:postgresql:42.2.16:jar -DoutputDirectory=/build/postgresql-jdbc.jar
 
-FROM quay.io/coreos/hadoop:latest
+FROM quay.io/btofel/metering-hadoop:metering-rel-rel-3.3.0
 
 ENV HIVE_VERSION=3.1.2
 ENV HIVE_HOME=/opt/hive
@@ -70,7 +70,7 @@ USER root
 
 RUN yum install --setopt=skip_missing_names_on_install=False -y \
         openssl \
-        mysql-connector-java \
+#        mysql-connector-java \
     && yum clean all \
     && rm -rf /var/cache/yum
 
