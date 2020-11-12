@@ -101,6 +101,10 @@ RUN mkdir -p /var/lib/hive /.beeline $HOME/.beeline
 RUN chown -R 1002:0 $HIVE_HOME $HADOOP_HOME /var/lib/hive /.beeline $HOME/.beeline /etc/passwd $JAVA_HOME/lib/security/cacerts && \
     chmod -R 774 $HIVE_HOME $HADOOP_HOME /var/lib/hive /.beeline $HOME/.beeline /etc/passwd $JAVA_HOME/lib/security/cacerts
 
+# fix guava library conflict
+RUN rm /opt/hive/lib/guava-19.0.jar
+RUN cp /opt/hadoop/share/hadoop/common/lib/guava-27.0-jre.jar /opt/hive/lib/
+
 VOLUME /var/lib/hive
 
 USER 1002
